@@ -8,7 +8,8 @@ RUN echo "deb http://archive.debian.org/debian/ buster main" > /etc/apt/sources.
     apt-get install -y --no-install-recommends \
         libpq-dev \
         gcc \
-        python3-dev && \
+        python3-dev \
+        postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
@@ -23,7 +24,8 @@ RUN echo "deb http://archive.debian.org/debian/ buster main" > /etc/apt/sources.
     echo "deb http://archive.debian.org/debian-security buster/updates main" >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-        libpq5 && \
+        libpq5 \
+        postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /root/.local /root/.local
@@ -36,6 +38,8 @@ COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
 ENV PATH=/root/.local/bin:$PATH
+
+ENV FLASK_APP=manage.py
 
 ENTRYPOINT ["./entrypoint.sh"]
 
